@@ -52,7 +52,6 @@ public class AuthController {
         }
     }
 
-    // Step 1 of admin login: validate credentials then send OTP
     @PostMapping("/admin-login-send-otp")
     public ResponseEntity<ApiResponse> adminLoginSendOtp(@RequestBody LoginRequest request) {
         try {
@@ -62,7 +61,6 @@ public class AuthController {
         }
     }
 
-    // Step 2 of admin login: verify OTP and return JWT token
     @PostMapping("/admin-login-verify-otp")
     public ResponseEntity<AuthResponse> adminLoginVerifyOtp(@RequestBody OtpVerifyRequest request) {
         try {
@@ -83,7 +81,6 @@ public class AuthController {
         }
     }
 
-    // Step 2 of forgot-password: verify OTP only, no password change yet
     @PostMapping("/verify-reset-otp")
     public ResponseEntity<ApiResponse> verifyResetOtp(@RequestBody OtpVerifyRequest request) {
         try {
@@ -93,7 +90,6 @@ public class AuthController {
         }
     }
 
-    // Step 3 of forgot-password: change password (OTP already verified)
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
         try {
