@@ -39,23 +39,29 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ Allow browser access (IMPORTANT)
+                .requestMatchers("/", "/error", "/favicon.ico").permitAll()
+
+                // ✅ Auth APIs (no token needed)
                 .requestMatchers(
-                    "/api/auth/register",
-                    "/api/auth/login",
-                    "/api/auth/verify-email",
-                    "/api/auth/resend-otp",
-                    "/api/auth/forgot-password",
-                    "/api/auth/verify-reset-otp",
-                    "/api/auth/reset-password",
-                    "/api/auth/admin-login-send-otp",
-                    "/api/auth/admin-login-verify-otp"
+                    "/api/auth/**"
                 ).permitAll()
+
+                // ✅ Role-based APIs
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/student/**").hasRole("STUDENT")
+
+                // ✅ Other APIs need login
                 .requestMatchers("/api/feedback/**").authenticated()
-                .anyRequest().authenticated()
+
+                // ❗ Everything else allowed for now (testing)
+                .anyRequest().permitAll()
             )
+
+            // ✅ Add JWT filter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
