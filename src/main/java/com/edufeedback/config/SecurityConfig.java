@@ -39,29 +39,26 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
             .authorizeHttpRequests(auth -> auth
-
-                // ✅ Allow browser access (IMPORTANT)
-                .requestMatchers("/", "/error", "/favicon.ico").permitAll()
-
-                // ✅ Auth APIs (no token needed)
+                // ── Auth endpoints (no token required) ──
                 .requestMatchers(
-                    "/api/auth/**"
+                    "/api/auth/register",
+                    "/api/auth/login",
+                    "/api/auth/verify-email",
+                    "/api/auth/resend-otp",
+                    "/api/auth/forgot-password",
+                    "/api/auth/verify-reset-otp",
+                    "/api/auth/reset-password",
+                    "/api/auth/admin-login-send-otp",
+                    "/api/auth/admin-login-verify-otp"
                 ).permitAll()
-
-                // ✅ Role-based APIs
+                // ── Admin endpoints (JWT required + ADMIN role) ──
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // ── Student endpoints (JWT required + STUDENT role) ──
                 .requestMatchers("/api/student/**").hasRole("STUDENT")
-
-                // ✅ Other APIs need login
-                .requestMatchers("/api/feedback/**").authenticated()
-
-                // ❗ Everything else allowed for now (testing)
+                // ── Any other /api endpoint requires a valid JWT ──
                 .anyRequest().permitAll()
             )
-
-            // ✅ Add JWT filter
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
